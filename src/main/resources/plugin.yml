@@ -1,0 +1,5 @@
+name: cubit-worldguard-fix
+version: ${project.version}
+description: Fix for worldguard
+author: Kekshaus
+main: de.linzn.cubitWorldguardFix.WorldGuardFixPlugin
