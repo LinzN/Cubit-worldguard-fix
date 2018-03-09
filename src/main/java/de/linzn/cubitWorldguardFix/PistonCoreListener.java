@@ -21,17 +21,29 @@ import java.util.UUID;
 
 public class PistonCoreListener implements Listener {
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-        System.out.println("onBlockPistonRetract");
+        final BlockFace dir = event.getDirection().getOppositeFace();
+        final Block pistonBlock = event.getBlock();
+        final List<Location> affected = new LinkedList<>();
+        final Block extensionBlock = pistonBlock.getRelative(dir);
         if (event.isSticky()) {
-
+            final Block affectedBlock = extensionBlock.getRelative(dir);
+            final int id = affectedBlock.getTypeId();
+            if (id != 0) {
+                affected.add(affectedBlock.getLocation());
+            }
+        }
+        affected.add(extensionBlock.getLocation());
+        if (checkOwner(pistonBlock.getLocation(), affected)) {
+            event.setCancelled(false);
+        } else {
+            event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-        System.out.println("onBlockPistonExtend");
         final Block pistonBlock = event.getBlock();
         final List<Block> affectedBlocks = event.getBlocks();
         final List<Location> locs = new LinkedList<>();
@@ -53,10 +65,8 @@ public class PistonCoreListener implements Listener {
         }
         if (checkOwner(pistonBlock.getLocation(), locs)) {
             event.setCancelled(false);
-            System.out.println("onBlockPistonExtend allow");
         } else {
             event.setCancelled(true);
-            System.out.println("onBlockPistonExtend deny");
         }
     }
 
@@ -67,18 +77,12 @@ public class PistonCoreListener implements Listener {
         ApplicableRegionSet pistonRegions = mg.getApplicableRegions(refLoc);
         ProtectedRegion cubitRegion = null;
         for (ProtectedRegion region : pistonRegions.getRegions()) {
-            //if (Cubit.isregion...){
             cubitRegion = region;
-            //}
         }
         List<ProtectedRegion> regionSet = new ArrayList<>();
 
         for (Location loc : locs) {
-            for (ProtectedRegion region : mg.getApplicableRegions(loc).getRegions()) {
-                //if (Cubit.isregion...){
-                regionSet.add(region);
-                //}
-            }
+            regionSet.addAll(mg.getApplicableRegions(loc).getRegions());
         }
         if (cubitRegion != null && !cubitRegion.getOwners().getUniqueIds().isEmpty()) {
             UUID owner = new ArrayList<>(cubitRegion.getOwners().getUniqueIds()).get(0);
