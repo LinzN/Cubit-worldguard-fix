@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2018. Niklas Linz - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the LGPLv3 license, which unfortunately won't be
+ * written for another century.
+ *
+ * You should have received a copy of the LGPLv3 license with
+ * this file. If not, please write to: niklas.linz@enigmar.de
+ */
+
 package de.linzn.cubitWorldguardFix;
 
 
@@ -6,6 +16,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -29,8 +40,8 @@ public class PistonCoreListener implements Listener {
         final Block extensionBlock = pistonBlock.getRelative(dir);
         if (event.isSticky()) {
             final Block affectedBlock = extensionBlock.getRelative(dir);
-            final int id = affectedBlock.getTypeId();
-            if (id != 0) {
+            final Material type = affectedBlock.getType();
+            if (type != Material.AIR) {
                 affected.add(affectedBlock.getLocation());
             }
         }
