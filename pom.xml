@@ -30,6 +30,11 @@
 					to download a SNAPSHOT dependency -->
             </snapshots>
         </repository>
+        <repository>
+            <id>enigmar-repo</id>
+            <url>https://repository.enigmar.de/</url>
+        </repository>
+
     </repositories>
 
 
