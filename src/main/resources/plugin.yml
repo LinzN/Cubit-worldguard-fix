@@ -3,3 +3,4 @@ version: ${project.version}
 description: Fix for worldguard
 author: Kekshaus
 main: de.linzn.cubitWorldguardFix.WorldGuardFixPlugin
+api-version: 1.13
