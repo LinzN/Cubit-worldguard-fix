@@ -11,6 +11,9 @@
 package de.linzn.cubitWorldguardFix;
 
 
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -82,10 +85,10 @@ public class PistonCoreListener implements Listener {
     }
 
     private boolean checkOwner(final Location refLoc, final List<Location> locs) {
-        final WorldGuardPlugin wg = WorldGuardPlugin.inst();
+        final WorldGuard wg = WorldGuard.getInstance();
         if (wg == null) return false;
-        final RegionManager mg = wg.getRegionManager(refLoc.getWorld());
-        ApplicableRegionSet pistonRegions = mg.getApplicableRegions(refLoc);
+        final RegionManager mg = wg.getPlatform().getRegionContainer().get(new BukkitWorld(refLoc.getWorld()));
+        ApplicableRegionSet pistonRegions = mg.getApplicableRegions(new Vector(refLoc.getX(), refLoc.getY(), refLoc.getZ()));
         ProtectedRegion cubitRegion = null;
         for (ProtectedRegion region : pistonRegions.getRegions()) {
             cubitRegion = region;
@@ -93,7 +96,7 @@ public class PistonCoreListener implements Listener {
         List<ProtectedRegion> regionSet = new ArrayList<>();
 
         for (Location loc : locs) {
-            regionSet.addAll(mg.getApplicableRegions(loc).getRegions());
+            regionSet.addAll(mg.getApplicableRegions(new Vector(loc.getX(), loc.getY(), loc.getZ())).getRegions());
         }
         if (cubitRegion != null && !cubitRegion.getOwners().getUniqueIds().isEmpty()) {
             UUID owner = new ArrayList<>(cubitRegion.getOwners().getUniqueIds()).get(0);
